@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button";
 import { Camera, Zap, Shield, CheckCircle, ArrowRight } from "lucide-react";
 import heroImage from "@/assets/hero-car-insurance.jpg";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const HeroSection = () => {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const sectionRef = useRef<HTMLElement>(null);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -23,9 +25,25 @@ const HeroSection = () => {
     return () => section?.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
+  const scrollToImageUpload = () => {
+    const imageUploadSection = document.getElementById('image-upload');
+    if (imageUploadSection) {
+      imageUploadSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
+  // Don't render if user is not authenticated
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
     <section 
       ref={sectionRef}
+      id="hero-section"
       className="relative min-h-screen flex items-center overflow-hidden bg-pearl"
     >
       {/* Floating geometric shapes */}
@@ -79,7 +97,12 @@ const HeroSection = () => {
           
           <div className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-              <Button variant="premium" size="lg" className="text-lg px-8 py-4 group">
+              <Button 
+                variant="premium" 
+                size="lg" 
+                className="text-lg px-8 py-4 group"
+                onClick={scrollToImageUpload}
+              >
                 <Camera className="mr-2 h-5 w-5 transition-transform group-hover:scale-110" />
                 Start Damage Assessment
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
